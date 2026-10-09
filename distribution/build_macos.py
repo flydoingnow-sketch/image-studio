@@ -20,6 +20,7 @@ if not (media/'bin/ffmpeg').is_file() or not (media/'bin/ffprobe').is_file():
  raise RuntimeError('Build the bundled media tools first')
 if (RES/'media-tools').exists():shutil.rmtree(RES/'media-tools')
 shutil.copytree(media,RES/'media-tools')
+subprocess.run([__import__('sys').executable,str(ROOT/'distribution/check_media_tools.py'),str(RES/'media-tools/bin')],check=True)
 for name in ('server.py','launcher.py','workspaces.html','brand-switch.js','brand-switch.css'):
  shutil.copy2(ROOT/name,RES/name)
 for name in ('core','tutorial'):
@@ -51,7 +52,7 @@ export PYTHONPATH="$app_resources/runtime/lib/python3.12/site-packages"
 export PATH="$app_resources/media-tools/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 exec "$app_resources/runtime/bin/python3" "$app_resources/launcher.py" "$@"
 ''');launcher.chmod(0o755)
-info={'CFBundleName':'影像工作台','CFBundleDisplayName':'影像工作台','CFBundleIdentifier':'com.imagestudio.workbench','CFBundleVersion':'1.0.1','CFBundleShortVersionString':'1.0.1','CFBundlePackageType':'APPL','CFBundleExecutable':'ImageStudio','LSMinimumSystemVersion':'14.0','LSUIElement':True,'NSHighResolutionCapable':True}
+info={'CFBundleName':'影像工作台','CFBundleDisplayName':'影像工作台','CFBundleIdentifier':'com.imagestudio.workbench','CFBundleVersion':'1.0.2','CFBundleShortVersionString':'1.0.2','CFBundlePackageType':'APPL','CFBundleExecutable':'ImageStudio','LSMinimumSystemVersion':'14.0','LSUIElement':True,'NSHighResolutionCapable':True}
 (APP/'Contents/Info.plist').write_bytes(plistlib.dumps(info))
 # No user directories, symlinks to the original machine, or API key stores may enter the app.
 for path in APP.rglob('*'):
@@ -62,6 +63,6 @@ subprocess.run([str(launcher),'--check'],env=env,check=True)
 for cache in list(APP.rglob('__pycache__')):
  if cache.is_dir():shutil.rmtree(cache)
 subprocess.run(['codesign','--force','--deep','--sign','-',str(APP)],check=True)
-subprocess.run(['pkgbuild','--root',str(WORK/'payload'),'--identifier','com.imagestudio.workbench','--version','1.0.1','--install-location','/Applications','--ownership','recommended',str(OUT/'影像工作台-AppleSilicon-1.0.1.pkg')],check=True)
+subprocess.run(['pkgbuild','--root',str(WORK/'payload'),'--identifier','com.imagestudio.workbench','--version','1.0.2','--install-location','/Applications','--ownership','recommended',str(OUT/'影像工作台-AppleSilicon-1.0.2.pkg')],check=True)
 shutil.copy2(ROOT/'distribution/安装运行环境.command',OUT/'安装运行环境.command')
 print('Built:',OUT)

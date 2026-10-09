@@ -11,7 +11,7 @@ tar -xf "$media_archive" -C build/ffmpeg
 cd build/ffmpeg/ffmpeg-9.0.2
 media_sdk="$(xcrun --sdk macosx --show-sdk-path)"
 media_flags="-mmacosx-version-min=14.0 -isysroot $media_sdk"
-./configure --cc=clang --prefix="$PWD/../installed" --disable-autodetect --disable-network --disable-doc --disable-ffplay --disable-debug --enable-small --disable-avdevice --disable-videotoolbox --disable-audiotoolbox --extra-cflags="$media_flags" --extra-ldflags="$media_flags" --host-cflags="$media_flags" --host-ldflags="$media_flags"
+./configure --cc=clang --prefix="$PWD/../installed" --disable-autodetect --enable-zlib --disable-network --disable-doc --disable-ffplay --disable-debug --enable-small --disable-avdevice --disable-videotoolbox --disable-audiotoolbox --extra-cflags="$media_flags" --extra-ldflags="$media_flags" --host-cflags="$media_flags" --host-ldflags="$media_flags"
 make -j8
 make install
 cd ../../..
@@ -26,4 +26,5 @@ for media_executable in media-tools/bin/*; do
   echo 'Unexpected dependency on an external library'; exit 1
  fi
 done
+python3 distribution/check_media_tools.py
 echo 'Built offline media tools.'
